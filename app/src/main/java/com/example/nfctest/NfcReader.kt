@@ -66,9 +66,9 @@ class NfcReader {
             val targetIDm: ByteArray = Arrays.copyOfRange(pollingRes, 2, 10)
 
             nfc.close()
-
-            // 結果をパースしてデータだけ取得
-            return targetIDm.toString()
+6
+            // toHexString
+            return targetIDm.asUByteArray().joinToString("") { it.toString(16).padStart(2, '0') }
         } catch (e: Exception) {
             Log.e(tag.toString(), e.message, e)
         }
