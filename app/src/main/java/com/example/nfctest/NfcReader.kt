@@ -11,6 +11,7 @@ import java.util.Arrays;
 class NfcReader {
     fun readTag(tag: Tag?): Array<ByteArray?>? {
         val nfc = NfcF.get(tag)
+
         try {
             nfc.connect()
             // System 1のシステムコード -> 0xFE00
@@ -42,33 +43,6 @@ class NfcReader {
 
             // 結果をパースしてデータだけ取得
             return parse(res)
-        } catch (e: Exception) {
-            Log.e(tag.toString(), e.message, e)
-        }
-        return null
-    }
-
-    fun getId(tag: Tag?): String? {
-        val nfc = NfcF.get(tag)
-        try {
-            nfc.connect()
-            // System 1のシステムコード -> 0xFE00
-            val targetSystemCode =
-                byteArrayOf(0xfe.toByte(), 0x00.toByte())
-
-            // polling コマンドを作成
-            val polling = polling(targetSystemCode)
-
-            // コマンドを送信して結果を取得
-            val pollingRes = nfc.transceive(polling)
-
-            // System 0 のIDｍを取得(1バイト目はデータサイズ、2バイト目はレスポンスコード、IDmのサイズは8バイト)
-            val targetIDm: ByteArray = Arrays.copyOfRange(pollingRes, 2, 10)
-
-            nfc.close()
-6
-            // toHexString
-            return targetIDm.asUByteArray().joinToString("") { it.toString(16).padStart(2, '0') }
         } catch (e: Exception) {
             Log.e(tag.toString(), e.message, e)
         }
